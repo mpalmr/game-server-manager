@@ -18,7 +18,11 @@ async function read() {
 }
 
 async function write(serversJson: ServersJson) {
-  return fs.writeFile(SERVERS_PATH, JSON.stringify(serversJson, null, 2));
+  return fs.writeFile(SERVERS_PATH, JSON.stringify(serversJson, null, 2), 'utf-8');
+}
+
+export async function initializeServers() {
+  return write({ servers: [] });
 }
 
 export async function getServers() {

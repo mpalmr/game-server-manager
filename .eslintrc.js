@@ -22,6 +22,9 @@ module.exports = {
       parserOptions: {
         project: './tsconfig.json',
       },
+      rules: {
+        'import/prefer-default-export': 0,
+      },
     },
     {
       files: ['*.js'],
@@ -37,6 +40,18 @@ module.exports = {
       },
       rules: {
         strict: [2, 'global'],
+      },
+    },
+    {
+      files: [
+        '**/__tests__/**',
+        '**/__mocks__/**',
+      ],
+      plugins: [
+        'jest',
+      ],
+      env: {
+        'jest/globals': true,
       },
     },
   ],

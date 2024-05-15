@@ -90,3 +90,6 @@ typings/
 
 # Electron-Forge
 out/
+
+# Testing files
+/.test-app-data
