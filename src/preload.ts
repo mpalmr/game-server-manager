@@ -1,6 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { Server } from './db';
-import context from 'react-bootstrap/esm/AccordionContext';
 
 interface GsmApi {
   getAllServers(): Promise<Server[]>;
