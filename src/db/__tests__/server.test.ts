@@ -6,6 +6,7 @@ import {
   getServers,
   createServer,
   removeServer,
+  getServerById,
 } from '../server';
 import rootPath from '../root-path';
 
@@ -23,8 +24,7 @@ function mockServersJson(servers: Server[]) {
 describe('getAllServers', () => {
   test('returns an empty array if there are no servers', async () => {
     mockServersJson([]);
-    const servers = await getServers();
-    expect(servers).toEqual([]);
+    return expect(getServers()).resolves.toEqual([]);
   });
 
   test('returns all stored servers', async () => {
@@ -42,8 +42,35 @@ describe('getAllServers', () => {
     ];
 
     mockServersJson(mockServers);
-    const servers = await getServers();
-    expect(servers).toEqual(mockServers);
+    return expect(getServers()).resolves.toEqual(mockServers);
+  });
+});
+
+describe('getServerById', () => {
+  test('gets a server by id', async () => {
+    mockServersJson([
+      {
+        id: 'not-me',
+        name: 'server1',
+        createdAt: new Date('2000-01-01'),
+      },
+      {
+        id: 'hello',
+        name: 'server2',
+        createdAt: new Date('2000-01-02'),
+      },
+    ]);
+
+    return expect(getServerById('hello')).resolves.toEqual({
+      id: 'hello',
+      name: 'server2',
+      createdAt: new Date('2000-01-02'),
+    });
+  });
+
+  test('throws an error if server does not exist', async () => {
+    mockServersJson([]);
+    return expect(getServerById('does-not-exist')).rejects.toThrow('Server not found');
   });
 });
 
@@ -59,7 +86,7 @@ describe('createServer', () => {
     mockCreateUuid.mockReturnValue('new-id');
     await createServer({ name: 'new server' });
 
-    expect(await getServers()).toEqual([
+    return expect(getServers()).resolves.toEqual([
       {
         id: 'existing-id',
         name: 'old server',
@@ -91,7 +118,7 @@ describe('removeServer', () => {
 
     await removeServer('id-to-remove');
 
-    expect(await getServers()).toEqual([
+    return expect(getServers()).resolves.toEqual([
       {
         id: 'id-to-keep',
         name: 'good server',

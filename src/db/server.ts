@@ -35,6 +35,17 @@ export async function getServers() {
   })));
 }
 
+export async function getServerById(serverId: string) {
+  const server = await read()
+    .then(({ servers }) => servers.find(({ id }) => id === serverId));
+
+  if (!server) throw new Error('Server not found');
+  return {
+    ...server,
+    createdAt: new Date(server.createdAt),
+  };
+}
+
 export async function createServer(server: Omit<Server, 'id' | 'createdAt'>) {
   const serversJson = await read();
   return write({
