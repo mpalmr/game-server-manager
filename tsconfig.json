@@ -18,6 +18,7 @@
   },
   "include": [
     "src/**/*",
-    "jest.setup.ts"
+    "jest.setup.ts",
+    "**/__mocks__/*.ts"
   ]
 }

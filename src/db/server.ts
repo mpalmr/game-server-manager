@@ -1,11 +1,14 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import { v4 as createUuid } from 'uuid';
 import rootPath from './root-path';
 
 const SERVERS_PATH = path.join(rootPath, 'servers.json');
 
 export interface Server {
+  id: string;
   name: string;
+  createdAt: Date;
 }
 
 interface ServersJson {
@@ -26,13 +29,28 @@ export async function initializeServers() {
 }
 
 export async function getServers() {
-  return read().then(({ servers }) => servers);
+  return read().then(({ servers }) => servers.map((server) => ({
+    ...server,
+    createdAt: new Date(server.createdAt),
+  })));
 }
 
-export async function createServer(server: Server) {
+export async function createServer(server: Omit<Server, 'id' | 'createdAt'>) {
   const serversJson = await read();
   return write({
     ...serversJson,
-    servers: serversJson.servers.concat(server),
+    servers: serversJson.servers.concat({
+      ...server,
+      id: createUuid(),
+      createdAt: new Date(),
+    }),
+  });
+}
+
+export async function removeServer(serverId: string) {
+  const serversJson = await read();
+  return write({
+    ...serversJson,
+    servers: serversJson.servers.filter((server) => server.id !== serverId),
   });
 }
