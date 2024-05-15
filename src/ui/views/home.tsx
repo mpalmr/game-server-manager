@@ -1,8 +1,11 @@
 import React, { FC } from 'react';
+import { Container } from 'react-bootstrap';
 
 const HomeView: FC = function HomeView() {
   return (
-    <h1>Home!</h1>
+    <Container>
+      <h1>Home!</h1>
+    </Container>
   );
 };
 

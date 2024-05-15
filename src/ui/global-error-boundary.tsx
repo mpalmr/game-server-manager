@@ -1,4 +1,13 @@
 import React, { ErrorInfo, Component, ReactNode } from 'react';
+import styled from 'styled-components';
+import { Button, Container } from 'react-bootstrap';
+
+const ErrorContainer = styled(Container)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+`;
 
 interface Props {
   children: ReactNode;
@@ -29,13 +38,13 @@ export default class GlobalErrorBoundary extends Component<Props, State> {
     const { error } = this.state;
 
     return !error ? children : (
-      <>
+      <ErrorContainer>
         <h1>Error</h1>
         <pre>{error.message}</pre>
-        <button type="button" onClick={document.location.reload}>
+        <Button variant="info" onClick={document.location.reload}>
           Reload
-        </button>
-      </>
+        </Button>
+      </ErrorContainer>
     );
   }
 }
