@@ -1,8 +1,13 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { Server } from './db';
+import type { Server } from './store';
+
+type ServerFields = Omit<Server, 'id' | 'lastSeenAt' | 'createdAt'>;
 
 interface GsmApi {
-  getAllServers(): Promise<Server[]>;
+  getServers(): Promise<Server[]>;
+  createServer(server: ServerFields): Promise<Server>;
+  updateServer(id: string, server: ServerFields): Promise<Server>;
+  removeServer(id: string): Promise<void>;
 }
 
 declare global {
@@ -12,5 +17,8 @@ declare global {
 }
 
 contextBridge.exposeInMainWorld('gsm', {
-  getAllServers: async () => ipcRenderer.invoke('getAllServers'),
+  getServers: async () => ipcRenderer.invoke('getServers'),
+  createServer: async (server) => ipcRenderer.invoke('createServer', server),
+  updateServer: async (id, server) => ipcRenderer.invoke('updateServer', id, server),
+  removeServer: async (id) => ipcRenderer.invoke('removeServer', id),
 } as GsmApi);

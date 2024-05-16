@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import HomeView from './home';
-import ServersView from './servers';
+import CreateServerView from './server/create';
 
 const Views: FC = function Views() {
   return (
     <Routes>
       <Route path="/" element={<HomeView />} />
-      <Route path="/games" element={<ServersView />} />
+      <Route path="/server/create" element={<CreateServerView />} />
     </Routes>
   );
 };
