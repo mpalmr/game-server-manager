@@ -1,20 +1,22 @@
 import Store from 'electron-store';
 
 export interface Server {
-  id: string;
+  readonly id: string;
   name: string;
   host: string;
   sshPort?: number;
   username: string;
   lastSeenAt?: Date;
-  createdAt: Date;
+  readonly createdAt: Date;
 }
 
-interface Schema {
+export type ServerEditableFields = Pick<Server, 'name' | 'host' | 'sshPort' | 'username'>;
+
+interface StoreData {
   servers: Server[];
 }
 
-const store = new Store<Schema>({
+const store = new Store<StoreData>({
   schema: {
     servers: {
       type: 'array',
@@ -26,7 +28,7 @@ const store = new Store<Schema>({
           host: { type: 'string' },
           sshPort: { type: 'number' },
           username: { type: 'string' },
-          lastSeenAt: { type: 'string' },
+          lastSeenAt: { type: 'object' },
           createdAt: { type: 'object' },
         },
         required: [
@@ -39,16 +41,17 @@ const store = new Store<Schema>({
       },
     },
   },
+
   defaults: {
     servers: [],
   },
 
   deserialize(json) {
-    const { servers, ...xs }: Schema = JSON.parse(json);
+    const storeData: StoreData = JSON.parse(json);
 
     return {
-      ...xs,
-      servers: servers.map((server) => ({
+      ...storeData,
+      servers: storeData.servers.map((server) => ({
         ...server,
         lastSeenAt: server.lastSeenAt && new Date(server.lastSeenAt),
         createdAt: new Date(server.createdAt),

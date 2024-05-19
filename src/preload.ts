@@ -1,12 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { Server } from './store';
-
-type ServerFields = Omit<Server, 'id' | 'lastSeenAt' | 'createdAt'>;
+import type { Server, ServerEditableFields } from './store';
 
 interface GsmApi {
   getServers(): Promise<Server[]>;
-  createServer(server: ServerFields): Promise<Server>;
-  updateServer(id: string, server: ServerFields): Promise<Server>;
+  createServer(server: ServerEditableFields): Promise<Server>;
+  updateServer(id: string, server: ServerEditableFields): Promise<Server>;
   removeServer(id: string): Promise<void>;
 }
 

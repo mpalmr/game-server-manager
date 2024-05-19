@@ -15,6 +15,11 @@ const NavList = styled(Ul)`
   }
 `;
 
+const Main = styled.main`
+  display: flex;
+  flex-grow: 1;
+`;
+
 interface Props {
   children: ReactNode;
 }
@@ -35,7 +40,7 @@ const Layout: FC<Props> = function Layout({ children }) {
         </Container>
       </Navbar>
 
-      <main>{children}</main>
+      <Main>{children}</Main>
     </>
   );
 };
