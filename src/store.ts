@@ -1,11 +1,19 @@
 import Store from 'electron-store';
 
+export interface Game {
+  readonly id: string;
+  title: 'Valheim' | 'Factorio';
+  lastRunningAt?: Date;
+  readonly createdAt: Date;
+}
+
 export interface Server {
   readonly id: string;
   name: string;
   host: string;
   sshPort?: number;
   username: string;
+  games: Game[];
   lastSeenAt?: Date;
   readonly createdAt: Date;
 }

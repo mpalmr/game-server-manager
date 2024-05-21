@@ -50,12 +50,27 @@ module.exports = {
       files: [
         '**/__tests__/**',
         '**/__mocks__/**',
+        '**/_test-utils.ts',
+        '**/_test-utils.tsx',
+      ],
+      extends: [
+        'plugin:import/typescript',
+        'airbnb',
+        'airbnb-typescript',
+        'plugin:jest/recommended',
+        'plugin:jest-dom/recommended',
       ],
       plugins: [
         'jest',
+        'jest-dom',
       ],
       env: {
         'jest/globals': true,
+      },
+      rules: {
+        'import/no-extraneous-dependencies': [2, {
+          devDependencies: true,
+        }],
       },
     },
   ],

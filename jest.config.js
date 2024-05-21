@@ -3,7 +3,7 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   clearMocks: true,
   testMatch: [
     '**/__tests__/*.test.ts',
@@ -14,4 +14,7 @@ module.exports = {
       'ts-jest',
     ],
   },
+  setupFilesAfterEnv: [
+    '<rootDir>/jest.setup.ts',
+  ],
 };

@@ -8,7 +8,7 @@ interface Props extends SpinnerProps {
 const Loading: FC<Props> = function Loading({ message, ...props }) {
   return (
     <Spinner role="status" {...props}>
-      <p className="visibly-hidden">
+      <p className="visibility-hidden">
         {message || 'Loading'}&hellip;
       </p>
     </Spinner>
