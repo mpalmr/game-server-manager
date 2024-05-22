@@ -59,11 +59,11 @@ const HomeView: FC = function HomeView() {
                   </Dl>
 
                   <ServerControls>
-                    <Link className="btn btn-success" to={`/server/${server.id}`}>
+                    <Link className="btn btn-success" to={`/servers/${server.id}/connect`}>
                       <FaGlobe />
                     </Link>
 
-                    <Link className="btn btn-info" to={`/server/${server.id}/edit`}>
+                    <Link className="btn btn-info" to={`/servers/${server.id}/edit`}>
                       <FaEdit />
                     </Link>
 
