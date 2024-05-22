@@ -16,9 +16,7 @@ const SplashView: FC = function SplashView() {
   const servers = useServers();
 
   useEffect(() => {
-    if (!servers.isLoading) {
-      navigate(servers.servers.length ? '/servers' : '/servers/create');
-    }
+    if (!servers.isLoading) navigate('/servers');
   }, [servers.isLoading]);
 
   return (

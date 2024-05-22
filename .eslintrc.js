@@ -71,6 +71,7 @@ module.exports = {
         'import/no-extraneous-dependencies': [2, {
           devDependencies: true,
         }],
+        'react/require-default-props': 0,
       },
     },
   ],
