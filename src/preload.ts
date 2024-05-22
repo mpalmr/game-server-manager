@@ -1,5 +1,7 @@
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 import type { Server, ServerEditableFields } from './store';
+
+type SshDataCb = (event: IpcRendererEvent, data: string) => void;
 
 interface GsmApi {
   getServers(): Promise<Server[]>;
@@ -7,7 +9,8 @@ interface GsmApi {
   updateServer(id: string, server: ServerEditableFields): Promise<Server>;
   removeServer(id: string): Promise<void>;
   connect(server: Server): Promise<void>;
-  onSshData(cb: (data: string) => void): void;
+  onSshData(cb: SshDataCb): void;
+  offSshData(cb: SshDataCb): void;
 }
 
 declare global {
@@ -22,5 +25,6 @@ contextBridge.exposeInMainWorld('gsm', {
   updateServer: async (id, server) => ipcRenderer.invoke('updateServer', id, server),
   removeServer: async (id) => ipcRenderer.invoke('removeServer', id),
   connect: async (server) => ipcRenderer.invoke('connect', server),
-  onSshData: (cb) => ipcRenderer.on('ssh-data', (event, value) => cb(value)),
+  onSshData: (cb) => ipcRenderer.on('ssh-data', cb),
+  offSshData: (cb) => ipcRenderer.removeListener('ssh-data', cb),
 } as GsmApi);
