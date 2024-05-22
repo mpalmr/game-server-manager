@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
 import { v4 as createUuid } from 'uuid';
+import { Client } from 'ssh2';
 import store, { Server } from './store';
 
 type NewServer = Omit<Server, 'id' | 'games' | 'createdAt'>;
@@ -46,5 +47,27 @@ export default function applyEvents() {
     }
 
     store.set('servers', existingServers.filter(({ id }) => id !== serverId));
+  });
+
+  ipcMain.handle('connect', async (event, server: Server) => {
+    const conn = new Client();
+
+    conn.on('ready', () => {
+      conn.shell((err, stream) => {
+        if (err) throw err;
+        stream
+          .on('close', conn.end)
+          .on('data', (data: string) => {
+            console.log('SSH OUTPUT', data);
+          });
+        stream.end('ls -l\nexit\n');
+      });
+    })
+      .connect({
+        host: server.host,
+        port: server.sshPort || 22,
+        username: server.username,
+        password: 'P@ssw0rd',
+      });
   });
 }
