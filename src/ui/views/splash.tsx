@@ -2,6 +2,7 @@ import React, { useEffect, FC } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
+import useServers from '../providers/servers';
 
 const SplashContainer = styled.div`
   display: flex;
@@ -12,13 +13,13 @@ const SplashContainer = styled.div`
 
 const SplashView: FC = function SplashView() {
   const navigate = useNavigate();
+  const servers = useServers();
 
   useEffect(() => {
-    window.gsm.getServers()
-      .then((servers) => {
-        navigate(servers.length ? '/server' : '/server/create');
-      });
-  }, []);
+    if (!servers.isLoading) {
+      navigate(servers.servers.length ? '/servers' : '/servers/create');
+    }
+  }, [servers.isLoading]);
 
   return (
     <SplashContainer>

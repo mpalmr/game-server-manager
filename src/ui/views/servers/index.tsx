@@ -1,11 +1,22 @@
-import React, { useEffect, useState, FC } from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button, Container } from 'react-bootstrap';
-import { FaGlobe, FaEdit, FaTrash } from 'react-icons/fa';
-import type { Server } from '../../../store';
+import {
+  FaPlus,
+  FaGlobe,
+  FaEdit,
+  FaTrash,
+} from 'react-icons/fa';
+import useServers from '../../providers/servers';
 import { Ul } from '../../components/list';
 import Dl from '../../components/dl';
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
 
 const ServerControls = styled.div`
   display: flex;
@@ -15,22 +26,19 @@ const ServerControls = styled.div`
 `;
 
 const HomeView: FC = function HomeView() {
-  const navigate = useNavigate();
-  const [servers, setServers] = useState<Server[]>();
+  const servers = useServers();
 
-  useEffect(() => {
-    window.gsm.getServers().then<void>((res) => {
-      if (res.length) {
-        setServers(res.slice().sort((a, b) => a.name.localeCompare(b.name)));
-      } else navigate('/server/create');
-    });
-  }, []);
-
-  return servers ? (
+  return (
     <Container>
-      <h1>Servers</h1>
+      <Header>
+        <h1>Servers</h1>
+        <Link className="btn btn-success" to="/servers/create">
+          <FaPlus />
+        </Link>
+      </Header>
+
       <Ul>
-        {servers.map((server) => (
+        {servers.servers.map((server) => (
           <li key={server.id}>
             <h2>{server.name}</h2>
             <Dl>
@@ -59,8 +67,6 @@ const HomeView: FC = function HomeView() {
         ))}
       </Ul>
     </Container>
-  ) : (
-    <h1>Loading&hellip;</h1>
   );
 };
 

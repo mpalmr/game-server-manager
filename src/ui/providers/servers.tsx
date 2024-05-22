@@ -30,7 +30,7 @@ function parseServer(server: Server): Server {
     ...server,
     lastSeenAt: server.lastSeenAt && new Date(server.lastSeenAt),
     createdAt: new Date(server.createdAt),
-    games: server.games.map((game) => ({
+    games: (server.games || []).map((game) => ({ // TODO: Remove "|| []"
       ...game,
       lastRunningAt: game.lastRunningAt && new Date(game.lastRunningAt),
       createdAt: new Date(game.createdAt),
