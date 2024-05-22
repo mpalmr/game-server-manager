@@ -22,8 +22,12 @@ const Header = styled.div`
 const ServerControls = styled.div`
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 1rem;
+
+  > .btn:not(:last-child) {
+    margin-right: .5rem;
+  }
 `;
 
 const HomeView: FC = function HomeView() {
@@ -63,7 +67,7 @@ const HomeView: FC = function HomeView() {
                       <FaEdit />
                     </Link>
 
-                    <Button variant="danger">
+                    <Button variant="danger" onClick={() => servers.remove(server.id)}>
                       <FaTrash />
                     </Button>
                   </ServerControls>
