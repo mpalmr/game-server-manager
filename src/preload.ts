@@ -7,6 +7,7 @@ interface GsmApi {
   updateServer(id: string, server: ServerEditableFields): Promise<Server>;
   removeServer(id: string): Promise<void>;
   connect(server: Server): Promise<void>;
+  onSshData(cb: (data: string) => void): void;
 }
 
 declare global {
@@ -21,4 +22,5 @@ contextBridge.exposeInMainWorld('gsm', {
   updateServer: async (id, server) => ipcRenderer.invoke('updateServer', id, server),
   removeServer: async (id) => ipcRenderer.invoke('removeServer', id),
   connect: async (server) => ipcRenderer.invoke('connect', server),
+  onSshData: (cb) => ipcRenderer.on('ssh-data', (event, value) => cb(value)),
 } as GsmApi);
