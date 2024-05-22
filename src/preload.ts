@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 import type { Server, ServerEditableFields } from './store';
 
-type SshDataCb = (event: IpcRendererEvent, data: string) => void;
+export type SshDataCb = (event: IpcRendererEvent, data: string) => void;
 
 interface GsmApi {
   getServers(): Promise<Server[]>;
