@@ -1,11 +1,10 @@
 name: test
 
 on:
-  pull_request:
+  push:
     branches:
       - master
       - development
-    types: [closed]
 
 jobs:
   test:
