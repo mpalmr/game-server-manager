@@ -54,7 +54,7 @@ const store = new Store<StoreData>({
     servers: [],
   },
 
-  deserialize(json) {
+  deserialize(json: string) {
     const storeData: StoreData = JSON.parse(json);
 
     return {
