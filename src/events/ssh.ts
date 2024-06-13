@@ -1,8 +1,10 @@
 import { ipcMain } from 'electron';
-import { Client } from 'ssh2';
+import { Client, ClientChannel } from 'ssh2';
 import store from '../store';
 
 export default function applySshEvents() {
+  let sshStream: ClientChannel;
+
   ipcMain.on('sshConnect', (event, serverId) => {
     const server = store.get('servers').find(({ id }) => id === serverId);
     if (!server) throw new Error(`Could not find server by ID: ${serverId}`);
@@ -15,6 +17,7 @@ export default function applySshEvents() {
         sshClient.shell((error, stream) => {
           if (error) event.sender.send('sshData', `Error: ${error.message}\n`);
           else {
+            sshStream = stream;
             stream
               .on('data', (data: string) => {
                 event.sender.send('sshData', data.toString());
@@ -30,8 +33,12 @@ export default function applySshEvents() {
         host: server.host,
         port: server.sshPort,
         username: server.username,
-        password: 'P@ssw0rd',
+        password: 'milo5985',
         timeout: 30_000,
       });
+  });
+
+  ipcMain.on('sshInput', (event, data) => {
+    if (sshStream) sshStream.write(data);
   });
 }

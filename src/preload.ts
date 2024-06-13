@@ -10,7 +10,11 @@ interface GsmApi {
   removeServer(id: string): Promise<void>;
 
   sshConnect(serverId: string): void;
-  onSshData(cb: (data: string) => void): void;
+  sshData(cb: (data: string) => void): void;
+  sshInput(key: string): void;
+  // sshConnect(serverId: string): void;
+  // sshSendData(data: string): void;
+  // onSshData(cb: (data: string) => void): void;
 }
 
 declare global {
@@ -26,5 +30,10 @@ contextBridge.exposeInMainWorld('gsm', {
   removeServer: async (id) => ipcRenderer.invoke('removeServer', id),
 
   sshConnect: (serverId) => ipcRenderer.send('sshConnect', serverId),
-  onSshData: (cb) => ipcRenderer.on('sshData', (event, data) => cb(data)),
+  sshData: (cb) => ipcRenderer.on('sshData', (event, data) => cb(data)),
+  sshInput: (data) => ipcRenderer.send('sshInput', data),
+
+  // sshConnect: (serverId) => ipcRenderer.send('sshConnect', serverId),
+  // sshSendData: (data) => ipcRenderer.send('sshSendData', data),
+  // onSshData: (cb) => ipcRenderer.on('sshData', (event, data) => cb(data)),
 } as GsmApi);

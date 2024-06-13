@@ -25,14 +25,19 @@ const Terminal: FC<Props> = function Terminal({ className, serverId }) {
     xterm.current.loadAddon(fitAddon.current);
     xterm.current.open(containerEl.current);
 
-    xterm.current.onData(window.gsm.sendSshData);
-    window.gsm.sshConnect(serverId);
-    window.gsm.onSshData((data) => {
+    xterm.current.onData((data) => {
+      window.gsm.sshSendData(data);
       xterm.current.write(data);
+      fitAddon.current.fit();
     });
 
-    xterm.current.write(' $ ');
+    window.gsm.onSshData((data) => {
+      xterm.current.write(data);
+      fitAddon.current.fit();
+    });
+
     fitAddon.current.fit();
+    window.gsm.sshConnect(serverId);
 
     return () => {
       if (xterm.current) xterm.current.dispose();
