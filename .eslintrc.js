@@ -1,5 +1,11 @@
 'use strict';
 
+const devDepsRule = {
+  'import/no-extraneous-dependencies': [2, {
+    devDependencies: true,
+  }],
+};
+
 module.exports = {
   overrides: [
     {
@@ -23,11 +29,11 @@ module.exports = {
         project: './tsconfig.json',
       },
       rules: {
-        'import/prefer-default-export': 0,
         'react/jsx-props-no-spreading': 0,
         'react/require-default-props': 0,
         'react/jsx-one-expression-per-line': 0,
         'react/jsx-no-bind': 0,
+        'import/prefer-default-export': 0,
       },
     },
     {
@@ -68,10 +74,18 @@ module.exports = {
         'jest/globals': true,
       },
       rules: {
-        'import/no-extraneous-dependencies': [2, {
-          devDependencies: true,
-        }],
+        ...devDepsRule,
         'react/require-default-props': 0,
+        'import/prefer-default-export': 0,
+      },
+    },
+    {
+      files: [
+        'forge.config.ts',
+        'webpack.plugins.ts',
+      ],
+      rules: {
+        ...devDepsRule,
       },
     },
   ],
