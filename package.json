@@ -16,7 +16,7 @@
     "test": "concurrently \"yarn typecheck\" \"yarn lint\" \"yarn jest\""
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.4.0",
+    "@hookform/resolvers": "3.1.1",
     "appdata-path": "^1.0.0",
     "bootstrap": "^5.3.3",
     "electron-squirrel-startup": "^1.0.1",
