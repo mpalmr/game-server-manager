@@ -5,6 +5,7 @@ export type SshDataCb = (event: IpcRendererEvent, data: string) => void;
 
 interface GsmApi {
   getServers(): Promise<Server[]>;
+  getServerById(id: string): Promise<Server>;
   createServer(server: ServerEditableFields): Promise<Server>;
   updateServer(id: string, server: ServerEditableFields): Promise<Server>;
   removeServer(id: string): Promise<void>;
@@ -25,6 +26,7 @@ declare global {
 
 contextBridge.exposeInMainWorld('gsm', {
   getServers: async () => ipcRenderer.invoke('getServers'),
+  getServerById: async (id) => ipcRenderer.invoke('getServerById', id),
   createServer: async (server) => ipcRenderer.invoke('createServer', server),
   updateServer: async (id, server) => ipcRenderer.invoke('updateServer', id, server),
   removeServer: async (id) => ipcRenderer.invoke('removeServer', id),
