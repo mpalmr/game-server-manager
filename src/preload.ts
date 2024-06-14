@@ -1,16 +1,17 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import type { Server, ServerEditableFields } from './store';
+import type { RawServer, ServerEditableFields } from './store';
 
 export type SshDataCb = (event: IpcRendererEvent, data: string) => void;
 
 interface GsmApi {
-  getServers(): Promise<Server[]>;
-  createServer(server: ServerEditableFields): Promise<Server>;
-  updateServer(id: string, server: ServerEditableFields): Promise<Server>;
+  getServers(): Promise<RawServer[]>;
+  createServer(server: ServerEditableFields): Promise<RawServer>;
+  updateServer(id: string, server: ServerEditableFields): Promise<RawServer>;
   removeServer(id: string): Promise<void>;
-  connect(server: Server): Promise<void>;
-  onSshData(cb: SshDataCb): void;
-  offSshData(cb: SshDataCb): void;
+
+  sshConnect(serverId: string): void;
+  sshData(cb: (data: string) => void): void;
+  sshInput(key: string): void;
 }
 
 declare global {
@@ -20,11 +21,12 @@ declare global {
 }
 
 contextBridge.exposeInMainWorld('gsm', {
-  getServers: async () => ipcRenderer.invoke('getServers'),
-  createServer: async (server) => ipcRenderer.invoke('createServer', server),
-  updateServer: async (id, server) => ipcRenderer.invoke('updateServer', id, server),
-  removeServer: async (id) => ipcRenderer.invoke('removeServer', id),
-  connect: async (server) => ipcRenderer.invoke('connect', server),
-  onSshData: (cb) => ipcRenderer.on('ssh-data', cb),
-  offSshData: (cb) => ipcRenderer.removeListener('ssh-data', cb),
+  getServers: async () => ipcRenderer.invoke('server.list'),
+  createServer: async (server) => ipcRenderer.invoke('server.create', server),
+  updateServer: async (id, server) => ipcRenderer.invoke('server.update', id, server),
+  removeServer: async (id) => ipcRenderer.invoke('server.remove', id),
+
+  sshConnect: (serverId) => ipcRenderer.send('ssh.connect', serverId),
+  sshData: (cb) => ipcRenderer.on('ssh.data', (event, data) => cb(data)),
+  sshInput: (data) => ipcRenderer.send('ssh.input', data),
 } as GsmApi);

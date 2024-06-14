@@ -49,6 +49,7 @@ module.exports = {
         sourceType: 'script',
       },
       rules: {
+        ...devDepsRule,
         strict: [2, 'global'],
       },
     },

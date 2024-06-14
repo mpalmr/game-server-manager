@@ -27,6 +27,7 @@
  */
 
 import 'bootstrap/dist/css/bootstrap.css';
+import '@xterm/xterm/css/xterm.css';
 import './index.css';
 import render from './ui';
 

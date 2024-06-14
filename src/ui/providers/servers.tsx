@@ -7,6 +7,7 @@ import React, {
   ReactNode,
   FC,
 } from 'react';
+import transformServer from '../../transforms/server';
 import type { Server, ServerEditableFields } from '../../store';
 
 interface Context {
@@ -25,19 +26,6 @@ export default function useServers() {
   return ctx;
 }
 
-function parseServer(server: Server): Server {
-  return {
-    ...server,
-    lastSeenAt: server.lastSeenAt && new Date(server.lastSeenAt),
-    createdAt: new Date(server.createdAt),
-    games: (server.games || []).map((game) => ({ // TODO: Remove "|| []"
-      ...game,
-      lastRunningAt: game.lastRunningAt && new Date(game.lastRunningAt),
-      createdAt: new Date(game.createdAt),
-    })),
-  };
-}
-
 interface Props {
   children: ReactNode;
 }
@@ -49,7 +37,7 @@ export const ServersProvider: FC<Props> = function ServersProvider({ children })
   useEffect(() => {
     window.gsm.getServers()
       .then((xs) => {
-        setServers(xs.map(parseServer));
+        setServers(xs.map(transformServer));
         setIsLoading(false);
       });
   }, []);
@@ -59,7 +47,7 @@ export const ServersProvider: FC<Props> = function ServersProvider({ children })
     isLoading,
 
     async create(server: ServerEditableFields) {
-      const newServer = parseServer(await window.gsm.createServer(server));
+      const newServer = transformServer(await window.gsm.createServer(server));
       setServers((prev) => prev.concat({
         ...newServer,
         lastSeenAt: newServer.lastSeenAt && new Date(newServer.lastSeenAt),
@@ -70,7 +58,7 @@ export const ServersProvider: FC<Props> = function ServersProvider({ children })
     },
 
     async update(serverId: string, server: ServerEditableFields) {
-      const updatedServer = parseServer(await window.gsm.updateServer(serverId, server));
+      const updatedServer = transformServer(await window.gsm.updateServer(serverId, server));
       setServers((prev) => prev.map((s) => (s.id === updatedServer.id ? updatedServer : s)));
       return updatedServer;
     },
