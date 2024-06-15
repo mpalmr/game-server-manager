@@ -13,9 +13,6 @@ interface GsmApi {
   sshConnect(serverId: string): void;
   sshData(cb: (data: string) => void): void;
   sshInput(key: string): void;
-  // sshConnect(serverId: string): void;
-  // sshSendData(data: string): void;
-  // onSshData(cb: (data: string) => void): void;
 }
 
 declare global {
@@ -25,17 +22,13 @@ declare global {
 }
 
 contextBridge.exposeInMainWorld('gsm', {
-  getServers: async () => ipcRenderer.invoke('getServers'),
-  getServerById: async (id) => ipcRenderer.invoke('getServerById', id),
-  createServer: async (server) => ipcRenderer.invoke('createServer', server),
-  updateServer: async (id, server) => ipcRenderer.invoke('updateServer', id, server),
-  removeServer: async (id) => ipcRenderer.invoke('removeServer', id),
+  getServers: async () => ipcRenderer.invoke('server.list'),
+  getServerById: async (id) => ipcRenderer.invoke('server.get-by-id', id),
+  createServer: async (server) => ipcRenderer.invoke('server.create', server),
+  updateServer: async (id, server) => ipcRenderer.invoke('server.update', id, server),
+  removeServer: async (id) => ipcRenderer.invoke('server.remove', id),
 
-  sshConnect: (serverId) => ipcRenderer.send('sshConnect', serverId),
-  sshData: (cb) => ipcRenderer.on('sshData', (event, data) => cb(data)),
-  sshInput: (data) => ipcRenderer.send('sshInput', data),
-
-  // sshConnect: (serverId) => ipcRenderer.send('sshConnect', serverId),
-  // sshSendData: (data) => ipcRenderer.send('sshSendData', data),
-  // onSshData: (cb) => ipcRenderer.on('sshData', (event, data) => cb(data)),
+  sshConnect: (serverId) => ipcRenderer.send('ssh.connect', serverId),
+  sshData: (cb) => ipcRenderer.on('ssh.data', (event, data) => cb(data)),
+  sshInput: (data) => ipcRenderer.send('ssh.input', data),
 } as GsmApi);

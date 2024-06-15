@@ -11,15 +11,15 @@ function expectUniqueHost(host: string, servers: Server[]) {
 }
 
 export default function applyServerEvents() {
-  ipcMain.handle('getServerList', () => store.get('servers'));
+  ipcMain.handle('server.list', () => store.get('servers'));
 
-  ipcMain.handle('getServerById', (event, id: string) => {
+  ipcMain.handle('server.get-by-id', (event, id: string) => {
     const match = store.get('servers').find((server) => server.id === id);
     if (!match) throw new Error(`Could not find server with ID: ${id}`);
     return match;
   });
 
-  ipcMain.handle('createServer', (event, server: NewServer) => {
+  ipcMain.handle('server.create', (event, server: NewServer) => {
     const newServer: Server = {
       ...server,
       id: createId(),
@@ -34,7 +34,7 @@ export default function applyServerEvents() {
     return newServer;
   });
 
-  ipcMain.handle('updateServer', (event, serverId: string, server: NewServer) => {
+  ipcMain.handle('server.update', (event, serverId: string, server: NewServer) => {
     const existingServers = store.get('servers');
     const updatedServer = {
       ...existingServers.find(({ id }) => id === serverId),
@@ -47,7 +47,7 @@ export default function applyServerEvents() {
     store.set('servers', existingServers.map((s) => (s.id !== serverId ? s : updatedServer)));
   });
 
-  ipcMain.handle('removeServer', (event, serverId: string) => {
+  ipcMain.handle('server.remove', (event, serverId: string) => {
     const existingServers = store.get('servers');
     if (existingServers.every((server) => server.id !== serverId)) {
       throw new Error('Server does not exist');

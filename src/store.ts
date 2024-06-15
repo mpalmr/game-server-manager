@@ -1,10 +1,17 @@
 import Store from 'electron-store';
+import { transformServer } from './transforms';
 
 export interface Game {
   readonly id: string;
-  title: 'Valheim' | 'Factorio';
+  readonly title: 'Valheim' | 'Factorio';
+  label?: string;
   lastRunningAt?: Date;
   readonly createdAt: Date;
+}
+
+export interface RawGame extends Omit<Game, 'lastRunningAt' | 'createdAt'> {
+  lastRunningAt?: string;
+  createdAt: string;
 }
 
 export interface Server {
@@ -18,7 +25,17 @@ export interface Server {
   readonly createdAt: Date;
 }
 
+export interface RawServer extends Omit<Server, 'lastSeenAt' | 'createdAt' | 'games'> {
+  lastSeenAt?: string;
+  createdAt: string;
+  games: RawGame[];
+}
+
 export type ServerEditableFields = Pick<Server, 'name' | 'host' | 'sshPort' | 'username'>;
+
+interface RawStoreData {
+  servers: RawServer[];
+}
 
 interface StoreData {
   servers: Server[];
@@ -38,12 +55,34 @@ const store = new Store<StoreData>({
           username: { type: 'string' },
           lastSeenAt: { type: 'object' },
           createdAt: { type: 'object' },
+          games: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                title: {
+                  type: 'string',
+                  enum: ['Valheim', 'Factorio'],
+                },
+                label: { type: 'string' },
+                lastRunningAt: { type: 'object' },
+                createdAt: { type: 'object' },
+              },
+              required: [
+                'id',
+                'title',
+                'createdAt',
+              ],
+            },
+          },
         },
         required: [
           'id',
           'name',
           'host',
           'username',
+          'games',
           'createdAt',
         ],
       },
@@ -54,16 +93,12 @@ const store = new Store<StoreData>({
     servers: [],
   },
 
-  deserialize(json: string) {
-    const storeData: StoreData = JSON.parse(json);
+  deserialize(json: string): StoreData {
+    const storeData: RawStoreData = JSON.parse(json);
 
     return {
       ...storeData,
-      servers: storeData.servers.map((server) => ({
-        ...server,
-        lastSeenAt: server.lastSeenAt && new Date(server.lastSeenAt),
-        createdAt: new Date(server.createdAt),
-      })),
+      servers: storeData.servers.map(transformServer),
     };
   },
 });

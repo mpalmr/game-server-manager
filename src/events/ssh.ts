@@ -5,7 +5,7 @@ import store from '../store';
 export default function applySshEvents() {
   let sshStream: ClientChannel;
 
-  ipcMain.on('sshConnect', (event, serverId) => {
+  ipcMain.on('ssh.connect', (event, serverId: string) => {
     const server = store.get('servers').find(({ id }) => id === serverId);
     if (!server) throw new Error(`Could not find server by ID: ${serverId}`);
 
@@ -38,7 +38,11 @@ export default function applySshEvents() {
       });
   });
 
-  ipcMain.on('sshInput', (event, data) => {
-    if (sshStream) sshStream.write(data);
+  ipcMain.on('ssh.data', (event, serverId: string) => {
+
+  });
+
+  ipcMain.on('ssh.input', (event, data: string) => {
+    sshStream.write(data);
   });
 }
